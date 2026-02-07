@@ -22,7 +22,7 @@ body{
     background-image: url('https://raw.githubusercontent.com/surajmagar135/proposal/main/New%20folder/ram.jpg');
     background-repeat: no-repeat;
     background-position: center center;
-    background-size: contain; /* desktop default */
+    background-size: contain;
 }
 
 /* ===== Side Videos ===== */
@@ -30,11 +30,21 @@ body{
     position:fixed;
     top:0;
     height:100vh;
-    width:25vw;          /* desktop */
+    width:25vw;
     object-fit:cover;
     z-index:-1;
     pointer-events:none;
 }
+
+/* 🔒 Hide mobile video controls completely */
+.bg-video::-webkit-media-controls,
+.bg-video::-webkit-media-controls-panel,
+.bg-video::-webkit-media-controls-play-button,
+.bg-video::-webkit-media-controls-start-playback-button{
+    display:none !important;
+    -webkit-appearance:none;
+}
+
 #video-left{ left:0; }
 #video-right{ right:0; }
 
@@ -103,28 +113,20 @@ button{
 #smirk{position:absolute;font-size:18px;display:none;}
 #kiss{position:absolute;top:6px;right:6px;font-size:20px;display:none;}
 
-/* ===== 📱 Mobile Auto Adjust ===== */
-@media (max-width: 768px){
+/* ===== 📱 Mobile ===== */
+@media (max-width:768px){
     body{
-        background-size: cover;   /* mobile full screen fit */
+        background-size: cover;
         padding-bottom:60px;
     }
-
-    .bg-video{
-        width:18vw;              /* mobile ma side video narrow */
-    }
-
+    .bg-video{ width:18vw; }
     .card{
         width:85%;
         max-width:260px;
     }
 }
-
-/* ===== 📱 Small phones ===== */
-@media (max-width: 480px){
-    .bg-video{
-        width:15vw;
-    }
+@media (max-width:480px){
+    .bg-video{ width:15vw; }
 }
 </style>
 </head>
@@ -132,11 +134,13 @@ button{
 <body>
 
 <!-- 🎥 Side videos -->
-<video class="bg-video" id="video-left" autoplay muted loop playsinline>
+<video class="bg-video" id="video-left"
+    autoplay muted loop playsinline preload="auto">
     <source src="https://raw.githubusercontent.com/surajmagar135/ppp/main/lop.mp4" type="video/mp4">
 </video>
 
-<video class="bg-video" id="video-right" autoplay muted loop playsinline>
+<video class="bg-video" id="video-right"
+    autoplay muted loop playsinline preload="auto">
     <source src="https://raw.githubusercontent.com/surajmagar135/ppp/main/lop.mp4" type="video/mp4">
 </video>
 
@@ -159,23 +163,27 @@ button{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 
 <script>
-const happySound = new Howl({
+/* 🔁 Force video continuous loop (mobile safe) */
+document.querySelectorAll(".bg-video").forEach(v=>{
+    v.onended=()=>{ v.currentTime=0; v.play(); };
+});
+
+/* ===== Sounds ===== */
+const happySound=new Howl({
   src:['https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'],
   volume:0.5
 });
-
-const sadClickSound = new Howl({
+const sadClickSound=new Howl({
   src:['https://actions.google.com/sounds/v1/cartoon/slide_whistle_down.ogg'],
   volume:0.5
 });
-
-const loveMusic = new Howl({
+const loveMusic=new Howl({
   src:['https://raw.githubusercontent.com/surajmagar135/unique/main/love.mp3'],
   volume:0.7
 });
 
-let isPlaying = false;
-loveMusic.on('end', ()=> isPlaying=false);
+let isPlaying=false;
+loveMusic.on('end',()=>isPlaying=false);
 
 const yesBtn=document.getElementById("yes");
 const noBtn=document.getElementById("no");
@@ -216,6 +224,7 @@ noBtn.addEventListener("mouseenter",moveNo);
 noBtn.addEventListener("touchstart",e=>{e.preventDefault();moveNo();});
 noBtn.addEventListener("click",()=>{sadClickSound.play();vibrate(150);});
 
+/* ❤️ Hearts */
 setInterval(()=>{
     const h=document.createElement("div");
     h.className="heart";
@@ -226,8 +235,9 @@ setInterval(()=>{
     setTimeout(()=>h.remove(),7000);
 },500);
 
+/* ⏰ Time */
 function updateTime(){
-    document.getElementById("currentTime").innerText =
+    document.getElementById("currentTime").innerText=
         new Date().toLocaleTimeString();
 }
 setInterval(updateTime,1000);
