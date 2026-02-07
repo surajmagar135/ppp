@@ -6,7 +6,6 @@
 <title>Valentine</title>
 
 <style>
-/* ===== Body & Background ===== */
 body{
     margin:0;
     height:100vh;
@@ -24,7 +23,7 @@ body{
     pointer-events:none;
 }
 
-/* ===== Side Videos ===== */
+/* Side Videos */
 .bg-video{
     position:fixed;
     top:0;
@@ -34,11 +33,10 @@ body{
     z-index:-1;
     pointer-events:none;
 }
-
 #video-left{ left:0; }
 #video-right{ right:0; }
 
-/* ===== Hearts ===== */
+/* Hearts */
 .heart{
     position:fixed;
     bottom:-20px;
@@ -50,7 +48,7 @@ body{
     to{ transform:translateY(-110vh); }
 }
 
-/* ===== Card ===== */
+/* Card */
 .card{
     background: rgba(255,255,255,0.1);
     backdrop-filter: blur(12px);
@@ -62,13 +60,12 @@ body{
     position:relative;
     pointer-events:auto;
 }
-
 .card h2{
     margin:10px 0 20px;
     font-size:16px;
 }
 
-/* ===== Buttons ===== */
+/* Buttons */
 button{
     padding:8px 16px;
     font-size:14px;
@@ -76,7 +73,6 @@ button{
     border-radius:8px;
     cursor:pointer;
 }
-
 #yes{
     background:#ff4d6d;
     color:white;
@@ -85,13 +81,11 @@ button{
     left:15px;
     top:90px;
 }
-
 @keyframes pulse{
     0%{transform:scale(1)}
     50%{transform:scale(1.1)}
     100%{transform:scale(1)}
 }
-
 #no{
     background:gray;
     color:white;
@@ -100,11 +94,10 @@ button{
     top:90px;
 }
 
-/* ===== Messages ===== */
+/* Messages */
 #hurray,#final-msg{display:none;color:#ff0055;}
 #hurray{font-size:18px;margin-top:8px;}
 #final-msg{font-size:14px;margin-top:4px;}
-
 #smirk{position:absolute;font-size:18px;display:none;}
 #kiss{position:absolute;top:6px;right:6px;font-size:20px;display:none;}
 </style>
@@ -140,10 +133,27 @@ button{
 <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
 
 <script>
-const happySound=new Howl({src:['https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'],volume:0.5});
-const sadClickSound=new Howl({src:['https://actions.google.com/sounds/v1/cartoon/slide_whistle_down.ogg'],volume:0.5});
-const loveMusic=new Howl({src:['https://raw.githubusercontent.com/surajmagar135/unique/main/love.mp3'],volume:0.7});
-let isPlaying=false;
+const happySound = new Howl({
+  src:['https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg'],
+  volume:0.5
+});
+
+const sadClickSound = new Howl({
+  src:['https://actions.google.com/sounds/v1/cartoon/slide_whistle_down.ogg'],
+  volume:0.5
+});
+
+const loveMusic = new Howl({
+  src:['https://raw.githubusercontent.com/surajmagar135/unique/main/love.mp3'],
+  volume:0.7
+});
+
+let isPlaying = false;
+
+/* 🔑 music sakiyesi flag reset */
+loveMusic.on('end', ()=>{
+    isPlaying = false;
+});
 
 const yesBtn=document.getElementById("yes");
 const noBtn=document.getElementById("no");
@@ -151,28 +161,36 @@ const card=document.getElementById("card");
 const smirk=document.getElementById("smirk");
 const kiss=document.getElementById("kiss");
 
-function vibrate(ms){ if(navigator.vibrate) navigator.vibrate(ms); }
+function vibrate(ms){
+    if(navigator.vibrate) navigator.vibrate(ms);
+}
 
 yesBtn.onclick=()=>{
- vibrate(120);
- happySound.play();
- if(!isPlaying){ loveMusic.play(); isPlaying=true; }
- document.getElementById("hurray").style.display="block";
- document.getElementById("final-msg").style.display="block";
- noBtn.style.display="none";
- smirk.style.display="none";
- kiss.style.display="block";
+    vibrate(120);
+    happySound.play();
+
+    /* 🎵 overlap prevent */
+    if(!isPlaying){
+        loveMusic.play();
+        isPlaying = true;
+    }
+
+    document.getElementById("hurray").style.display="block";
+    document.getElementById("final-msg").style.display="block";
+    noBtn.style.display="none";
+    smirk.style.display="none";
+    kiss.style.display="block";
 };
 
 function moveNo(){
- vibrate(80);
- let x=Math.random()*(card.clientWidth-noBtn.offsetWidth);
- let y=Math.random()*(card.clientHeight-noBtn.offsetHeight-40)+40;
- noBtn.style.left=x+"px";
- noBtn.style.top=y+"px";
- smirk.style.display="block";
- smirk.style.left=(x+25)+"px";
- smirk.style.top=y+"px";
+    vibrate(80);
+    let x=Math.random()*(card.clientWidth-noBtn.offsetWidth);
+    let y=Math.random()*(card.clientHeight-noBtn.offsetHeight-40)+40;
+    noBtn.style.left=x+"px";
+    noBtn.style.top=y+"px";
+    smirk.style.display="block";
+    smirk.style.left=(x+25)+"px";
+    smirk.style.top=y+"px";
 }
 
 noBtn.addEventListener("mouseenter",moveNo);
@@ -180,17 +198,18 @@ noBtn.addEventListener("touchstart",e=>{e.preventDefault();moveNo();});
 noBtn.addEventListener("click",()=>{sadClickSound.play();vibrate(150);});
 
 setInterval(()=>{
- const h=document.createElement("div");
- h.className="heart";
- h.innerHTML="❤️";
- h.style.left=Math.random()*100+"vw";
- h.style.animationDuration=(3+Math.random()*4)+"s";
- document.body.appendChild(h);
- setTimeout(()=>h.remove(),7000);
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="❤️";
+    h.style.left=Math.random()*100+"vw";
+    h.style.animationDuration=(3+Math.random()*4)+"s";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),7000);
 },500);
 
 function updateTime(){
- document.getElementById("currentTime").innerText=new Date().toLocaleTimeString();
+    document.getElementById("currentTime").innerText =
+        new Date().toLocaleTimeString();
 }
 setInterval(updateTime,1000);
 updateTime();
